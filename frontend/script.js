@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     createNewSession();
     loadCourseStats();
+
+    document.getElementById('newChatBtn').addEventListener('click', createNewSession);
 });
 
 // Event Listeners
@@ -59,6 +61,8 @@ async function sendMessage() {
     chatMessages.appendChild(loadingMessage);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
+    const startTime = Date.now();
+
     try {
         const response = await fetch(`${API_URL}/query`, {
             method: 'POST',
@@ -81,8 +85,9 @@ async function sendMessage() {
         }
 
         // Replace loading message with response
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
         loadingMessage.remove();
-        addMessage(data.answer, 'assistant', data.sources);
+        addMessage(data.answer, 'assistant', data.sources, false, elapsed);
 
     } catch (error) {
         // Replace loading message with error
@@ -110,7 +115,7 @@ function createLoadingMessage() {
     return messageDiv;
 }
 
-function addMessage(content, type, sources = null, isWelcome = false) {
+function addMessage(content, type, sources = null, isWelcome = false, processingTime = null) {
     const messageId = Date.now();
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}${isWelcome ? ' welcome-message' : ''}`;
@@ -121,6 +126,10 @@ function addMessage(content, type, sources = null, isWelcome = false) {
     
     let html = `<div class="message-content">${displayContent}</div>`;
     
+    if (processingTime !== null) {
+        html += `<div class="message-meta">${processingTime}s</div>`;
+    }
+
     if (sources && sources.length > 0) {
         html += `
             <details class="sources-collapsible">
@@ -147,6 +156,9 @@ function escapeHtml(text) {
 // Removed removeMessage function - no longer needed since we handle loading differently
 
 async function createNewSession() {
+    if (currentSessionId) {
+        fetch(`${API_URL}/session/${currentSessionId}`, { method: 'DELETE' }).catch(() => {});
+    }
     currentSessionId = null;
     chatMessages.innerHTML = '';
     addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);

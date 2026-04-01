@@ -103,6 +103,27 @@ header h1 {
     background: var(--text-secondary);
 }
 
+.new-chat-btn {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.new-chat-btn:hover {
+    color: var(--primary-color);
+}
+
 .sidebar-section {
     margin-bottom: 1.5rem;
 }
@@ -243,6 +264,11 @@ header h1 {
 .sources-content {
     padding: 0 0.5rem 0.25rem 1.5rem;
     color: var(--text-secondary);
+}
+
+.sources-content a {
+    color: #60a5fa;
+    text-decoration: underline;
 }
 
 /* Markdown formatting styles */
