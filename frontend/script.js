@@ -1,6 +1,30 @@
 // API base URL - use relative path to work from any host
 const API_URL = '/api';
 
+// ── Theme Toggle ──────────────────────────────────────────────────────────────
+(function initTheme() {
+    const btn = document.getElementById('themeToggle');
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light') {
+        document.body.classList.add('light-theme');
+        btn.setAttribute('aria-label', 'Switch to dark mode');
+    }
+
+    btn.addEventListener('click', () => {
+        // Trigger smooth cross-element transition
+        document.body.classList.add('theme-transitioning');
+        setTimeout(() => document.body.classList.remove('theme-transitioning'), 350);
+
+        // Spin animation
+        btn.classList.add('toggling');
+        btn.addEventListener('animationend', () => btn.classList.remove('toggling'), { once: true });
+
+        const isLight = document.body.classList.toggle('light-theme');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        btn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    });
+})();
+
 // Global state
 let currentSessionId = null;
 
